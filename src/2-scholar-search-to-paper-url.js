@@ -1,3 +1,14 @@
+    
+// Step 2 is to run this script in the brower.
+// it pulls the google scholar pages for each of the 
+// papers using a title search and saves it out to disk
+// by triggering an automatic download
+// you need to run this in the js console when in the browser
+// looking at google scholar 
+// if it crashes on the robot thing, just authenticate, 
+// update the skips variable and 
+// carry on
+
     // Define an array of URLs
 var urls = [
     // "http://localhost:8888"
@@ -715,7 +726,11 @@ function get_first_url(data){
 function fetchAndProcess(url) {
     // Make an HTTP GET request to the URL
 
-    
+    if (robot) {
+        console.log("Robot detector busted us :( ");
+        window.location.href = url;
+        return; 
+    }
     fetch(url)
         .then(response => response.text())
         .then(data => {
@@ -723,8 +738,13 @@ function fetchAndProcess(url) {
             // Replace this with your actual processing logic
             // console.log("Processing data for URL:", url);
             let perc = (index +1) / total_urls; 
+
             perc = Math.round(perc * 100);
             console.log(index + " of " + total_urls + ": " + perc + "%");
+            if (data.indexOf("Please show you&#39;re not a robot") != -1){
+                // busted 
+                robot = true; 
+            }
             download("scholar_" + index + ".html", data);
             index ++; 
             //var href = get_first_url(data);
@@ -754,9 +774,16 @@ function fetchAndProcess(url) {
 }
 
 // Start processing URLs from the array
-let index = 0;
+let skip = 444; // set to last good html number + 1
+let robot = false; 
+let index = skip;
 let total_urls = urls.length;
 var initialUrl = urls.shift();
+console.log("start url" + initialUrl)
+for (i=0;i<skip;i++){
+    initialUrl = urls.shift();
+}
+console.log("url" + initialUrl)
 if (initialUrl) {
     fetchAndProcess(initialUrl);
 } else {

@@ -1,3 +1,6 @@
+## Step 1 is to read a bibtex file containing all the refs of interest and convert it into a a list
+## of google scholar urls which can then be GETted by step 2. 
+
 import requests
 from bs4 import BeautifulSoup
 import urllib
